@@ -8,8 +8,11 @@ A fully-featured Telegram music bot with voice chat capabilities, speech recogni
 
 ### Core Functionality
 - **Voice Chat Integration**: Assistant account joins voice chats to play music
+- **Continuous Voice Listening**: Assistant listens to voice chat continuously
+- **Wake Word Detection**: Say "assistant" to activate commands
+- **Natural Language Processing**: Speak naturally - "Assistant play Challeya"
 - **Multi-Platform Support**: YouTube, Spotify, SoundCloud, and more
-- **Speech Recognition**: Speak your requests, bot recognizes and plays
+- **Speech Recognition**: Advanced voice command recognition
 - **Auto-Join**: Assistant automatically joins groups when bot is added
 - **Comprehensive Logging**: All activities logged to a dedicated logger group
 - **Statistics Tracking**: MongoDB-powered analytics and usage stats
@@ -52,12 +55,15 @@ bot.py                  # Main entry point, initializes bot and assistant
 │   └── mongodb.py     # Database operations
 ├── handlers/
 │   ├── commands.py    # Basic command handlers
-│   ├── voice_chat.py  # Voice chat management
+│   ├── voice_chat.py  # Voice chat management & listening
 │   └── music.py       # Music playback handlers
 └── utils/
-    ├── logger.py      # Logging utilities
-    ├── downloader.py  # Music download and search
-    └── speech.py      # Speech recognition
+    ├── logger.py          # Logging utilities
+    ├── downloader.py      # Music download and search
+    ├── speech.py          # Speech recognition
+    ├── voice_listener.py  # Voice chat listening & wake word
+    ├── audio_capture.py   # Voice chat audio capture
+    └── generate_silence.py # Silence audio generator
 ```
 
 ### Data Flow
@@ -72,11 +78,21 @@ bot.py                  # Main entry point, initializes bot and assistant
 
 ### Voice Recognition Flow
 
-1. User sends voice message
+#### Voice Chat Listening Mode (New!)
+1. Assistant joins voice chat with `/assiststart`
+2. Continuous listening mode activated
+3. Users speak naturally in voice chat: "Assistant play Challeya"
+4. Wake word detection identifies "assistant" keyword
+5. Command parser extracts action and query
+6. Searches and downloads requested song
+7. Plays music while continuing to listen
+
+#### Voice Message Mode
+1. User sends voice message to chat
 2. Bot downloads voice file
 3. Converts to WAV format
 4. Google Speech Recognition processes audio
-5. Extracts song request
+5. Wake word detection and command extraction
 6. Plays requested song
 
 ## Deployment Options

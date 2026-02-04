@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from datetime import datetime
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -7,6 +8,7 @@ from config import config
 from database.mongodb import db
 from handlers import commands, voice_chat, music
 from utils.logger import send_startup_log
+from utils.generate_silence import generate_silence_file
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,6 +37,12 @@ class MusicBot:
 
     async def start(self):
         try:
+            os.makedirs(config.MUSIC_CACHE_DIR, exist_ok=True)
+            os.makedirs(config.VOICE_CACHE_DIR, exist_ok=True)
+
+            logger.info("Generating silence audio file for voice chat...")
+            generate_silence_file()
+
             await db.connect()
 
             await self.bot.start()
@@ -50,6 +58,7 @@ class MusicBot:
 
             logger.info(f"Bot: @{bot_info.username}")
             logger.info(f"Assistant: @{assistant_info.username}")
+            logger.info("Voice chat listening mode enabled")
 
             await asyncio.Event().wait()
 

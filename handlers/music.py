@@ -7,6 +7,7 @@ from utils.downloader import download_song, search_song
 from utils.speech import recognize_speech
 from utils.logger import log_to_group
 from handlers.voice_chat import join_voice_chat, active_calls
+from utils.voice_listener import voice_listener
 import os
 
 logger = logging.getLogger(__name__)
@@ -91,19 +92,33 @@ async def voice_message_handler(client: Client, message: Message):
         return
 
     try:
-        status_msg = await message.reply_text("Listening to your request...")
+        status_msg = await message.reply_text("Processing your voice command...")
 
         voice_file = await message.download()
 
-        query = await recognize_speech(voice_file)
+        async def handle_command(chat_id: int, command: dict):
+            await process_voice_command_from_message(client, message, command, status_msg)
 
-        if query:
-            await status_msg.edit_text(f"You said: {query}\n\nSearching...")
+        await voice_listener.process_voice_segment(chat_id, voice_file, handle_command)
 
-            if "play" in query.lower():
-                song_query = query.lower().replace("play", "").strip()
+        if os.path.exists(voice_file):
+            os.remove(voice_file)
 
-                song_info = await search_song(song_query)
+    except Exception as e:
+        logger.error(f"Error processing voice message: {e}")
+        await message.reply_text(f"Error processing voice: {str(e)}")
+
+async def process_voice_command_from_message(client: Client, message: Message, command: dict, status_msg: Message):
+    try:
+        chat_id = message.chat.id
+        action = command.get('action')
+
+        if action == 'play':
+            query = command.get('query', '')
+            if query:
+                await status_msg.edit_text(f"Playing: {query}\n\nSearching...")
+
+                song_info = await search_song(query)
 
                 if song_info:
                     await status_msg.edit_text(f"Found: {song_info['title']}\nDownloading...")
@@ -116,7 +131,9 @@ async def voice_message_handler(client: Client, message: Message):
 
                         if success:
                             await status_msg.edit_text(
-                                f"Now Playing:\n{song_info['title']}"
+                                f"Now Playing:\n{song_info['title']}\n\n"
+                                f"Duration: {song_info.get('duration', 'Unknown')}\n"
+                                f"Platform: {song_info.get('platform', 'YouTube')}"
                             )
 
                             await db.add_song_play(
@@ -124,22 +141,31 @@ async def voice_message_handler(client: Client, message: Message):
                                 song_info.get('platform', 'YouTube'),
                                 chat_id
                             )
+
+                            await log_to_group(
+                                client,
+                                f"**Voice Command Executed**\n"
+                                f"Song: {song_info['title']}\n"
+                                f"Chat: {message.chat.title}\n"
+                                f"User: {message.from_user.mention}"
+                            )
+                        else:
+                            await status_msg.edit_text("Error starting playback!")
+                    else:
+                        await status_msg.edit_text("Error downloading the song!")
                 else:
                     await status_msg.edit_text("Sorry, couldn't find the song!")
             else:
-                await status_msg.edit_text(
-                    "I heard you, but I didn't understand the command.\n"
-                    "Try saying 'play [song name]'"
-                )
+                await status_msg.edit_text("Please specify a song name!")
         else:
-            await status_msg.edit_text("Sorry, couldn't understand what you said!")
-
-        if os.path.exists(voice_file):
-            os.remove(voice_file)
+            await status_msg.edit_text(
+                f"Command received: {action}\n"
+                f"This feature is coming soon!"
+            )
 
     except Exception as e:
-        logger.error(f"Error processing voice message: {e}")
-        await message.reply_text(f"Error processing voice: {str(e)}")
+        logger.error(f"Error processing voice command from message: {e}")
+        await status_msg.edit_text(f"Error: {str(e)}")
 
 def setup_handlers(bot: Client, assistant: Client):
     bot.assistant = assistant

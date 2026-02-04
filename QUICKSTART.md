@@ -101,9 +101,12 @@ python bot.py
 
 1. Add your bot to a group
 2. Make it admin with necessary permissions
-3. In the group, send: `/assiststart`
-4. Send: `/play Despacito`
-5. Enjoy the music!
+3. Start or join a voice chat in the group
+4. In the group, send: `/assiststart`
+5. The assistant will join the voice chat and start listening
+6. Speak in the voice chat: "Assistant play Despacito"
+7. Or send: `/play Despacito`
+8. Enjoy the music with voice control!
 
 ## Deploy to Heroku
 

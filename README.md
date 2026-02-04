@@ -6,6 +6,9 @@ A powerful Telegram music bot with voice chat support, speech recognition, and m
 
 - Play music from YouTube, Spotify, SoundCloud, and more
 - Voice chat integration with pytgcalls
+- Continuous voice chat listening - assistant listens while in voice chat
+- Wake word detection - say "assistant" to activate commands
+- Natural language processing - speak naturally to control playback
 - Speech recognition - just speak and the bot will play your request
 - Assistant account that joins groups automatically
 - Comprehensive logging system
@@ -22,12 +25,20 @@ A powerful Telegram music bot with voice chat support, speech recognition, and m
 - `/ping` - Check bot latency
 
 ### Music Commands
-- `/assiststart` - Start assistant in voice chat
+- `/assiststart` - Start assistant and activate voice chat listening
 - `/assistclose` - Stop assistant from voice chat
 - `/play [song name]` - Play a song in voice chat
 
-### Voice Recognition
-Simply send a voice message after starting the assistant, and it will recognize your speech and play the requested song!
+### Voice Chat Listening
+When you use `/assiststart`, the assistant joins the voice chat and continuously listens for commands. Simply speak naturally in the voice chat:
+
+- "Assistant play Challeya" - Play a song
+- "Assistant play Shape of You by Ed Sheeran" - Play specific song
+- "Assistant pause" - Pause playback
+- "Assistant resume" - Resume playback
+- "Assistant stop" - Stop playback
+
+You can also send voice messages in the chat, and the bot will process them!
 
 ## Requirements
 
@@ -216,11 +227,16 @@ sudo journalctl -u music-bot -f
 
 1. Add the bot to your group
 2. Make it an admin with necessary permissions
-3. Use `/assiststart` to activate the assistant
-4. The assistant account will automatically join the group
-5. Use `/play [song name]` or send a voice message with your request
-6. The bot will play music in the voice chat
-7. Use `/assistclose` to stop the session
+3. Start or join a voice chat in your group
+4. Use `/assiststart` to activate the assistant
+5. The assistant will join the voice chat and start listening
+6. Speak naturally in the voice chat:
+   - Say "Assistant play Challeya" to play a song
+   - Say "Assistant pause" to pause
+   - Say "Assistant resume" to resume
+7. Alternatively, use `/play [song name]` or send voice messages
+8. The assistant stays in voice chat and continuously listens for commands
+9. Use `/assistclose` to stop the session
 
 ## Project Structure
 
@@ -244,9 +260,12 @@ telegram-music-bot/
 │   └── music.py         # Music playback handlers
 └── utils/
     ├── __init__.py
-    ├── logger.py        # Logging utilities
-    ├── downloader.py    # Music download utilities
-    └── speech.py        # Speech recognition
+    ├── logger.py          # Logging utilities
+    ├── downloader.py      # Music download utilities
+    ├── speech.py          # Speech recognition
+    ├── voice_listener.py  # Voice chat listening and wake word detection
+    ├── audio_capture.py   # Voice chat audio capture
+    └── generate_silence.py # Silence audio file generator
 ```
 
 ## Troubleshooting

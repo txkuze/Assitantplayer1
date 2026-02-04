@@ -12,7 +12,7 @@ async def start_handler(client: Client, message: Message):
     await db.increment_command_usage("start")
     await message.reply_text(
         f"Hello {message.from_user.mention}!\n\n"
-        "I'm a powerful music bot that can play music in voice chats.\n\n"
+        "I'm a powerful music bot with voice chat listening capabilities!\n\n"
         "**Available Commands:**\n"
         "/start - Start the bot\n"
         "/help - Get help\n"
@@ -21,7 +21,9 @@ async def start_handler(client: Client, message: Message):
         "/assiststart - Start assistant in voice chat\n"
         "/assistclose - Stop assistant from voice chat\n"
         "/play [song name] - Play a song\n\n"
-        "Just speak after /assiststart and I'll play what you request!"
+        "**Voice Control:**\n"
+        "Say 'Assistant play [song name]' in voice chat and I'll play it!\n"
+        "The assistant listens continuously when active."
     )
 
 async def help_handler(client: Client, message: Message):
@@ -36,16 +38,26 @@ async def help_handler(client: Client, message: Message):
 /ping - Check bot response time
 
 **Music Commands:**
-/assiststart - Start assistant in voice chat
+/assiststart - Start assistant and activate voice listening
 /assistclose - Stop assistant from voice chat
 /play [song name] - Play a song in voice chat
 
+**Voice Chat Control:**
+The assistant listens continuously when active. Just speak naturally:
+- "Assistant play Challeya"
+- "Assistant play Shape of You by Ed Sheeran"
+- "Assistant pause"
+- "Assistant resume"
+- "Assistant stop"
+
 **How to use:**
 1. Add the bot to your group
-2. Use /assiststart to activate voice chat
-3. Speak or use /play to request songs
-4. The bot supports YouTube, Spotify, and more!
-5. Use /assistclose to end the session
+2. Start or join a voice chat
+3. Use /assiststart to activate voice listening
+4. Speak naturally: "Assistant play [song name]"
+5. Or use /play [song name] or send voice messages
+6. The assistant stays active and listens for commands
+7. Use /assistclose to end the session
 
 **Supported Platforms:**
 - YouTube
