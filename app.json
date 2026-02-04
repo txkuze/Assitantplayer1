@@ -13,30 +13,37 @@
   "env": {
     "API_ID": {
       "description": "Get this value from https://my.telegram.org",
+      "value": "34594672",
       "required": true
     },
     "API_HASH": {
       "description": "Get this value from https://my.telegram.org",
+      "value":"a008e5018b8662e872be5a8670db4840",
       "required": true
     },
     "BOT_TOKEN": {
       "description": "Get bot token from @BotFather",
+      "value": "",
       "required": true
     },
     "STRING_SESSION": {
       "description": "Generate using generate_session.py script",
+      "value": "",
       "required": true
     },
     "LOGGER_GROUP_ID": {
       "description": "Telegram group ID for logs (with -100 prefix)",
+      "value": "-1003228624224",
       "required": true
     },
     "MONGODB_URI": {
       "description": "MongoDB connection string",
+      "value": "mongodb+srv://knight4563:knight4563@cluster0.a5br0se.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
       "required": true
     },
     "YOUTUBE_API_KEY": {
       "description": "YouTube Data API key (optional)",
+      "value": "",
       "required": false
     },
     "YOUTUBE_COOKIES_PATH": {
@@ -46,14 +53,17 @@
     },
     "SPOTIFY_CLIENT_ID": {
       "description": "Spotify Client ID (optional)",
+      "value": "",
       "required": false
     },
     "SPOTIFY_CLIENT_SECRET": {
       "description": "Spotify Client Secret (optional)",
+      "value": "",
       "required": false
     },
     "OWNER_ID": {
       "description": "Your Telegram user ID",
+      "value": "7651303468",
       "required": true
     }
   },
