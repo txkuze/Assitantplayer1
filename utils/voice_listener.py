@@ -129,11 +129,10 @@ class VoiceChatListener:
             (r'start\s+(.+)', 'play'),
             (r'put\s+on\s+(.+)', 'play'),
             (r'listen\s+to\s+(.+)', 'play'),
-            (r'pause', 'pause'),
-            (r'resume', 'resume'),
-            (r'stop', 'stop'),
-            (r'skip', 'skip'),
-            (r'next', 'skip'),
+            (r'pause|hold', 'pause'),
+            (r'resume|continue|unpause', 'resume'),
+            (r'stop|end|quit|close', 'stop'),
+            (r'skip|next', 'skip'),
             (r'volume\s+(\d+)', 'volume'),
         ]
 

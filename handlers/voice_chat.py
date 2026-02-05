@@ -1,5 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from pyrogram.handlers import MessageHandler
 from pyrogram.errors import UserAlreadyParticipant, InviteHashExpired
 from pytgcalls import PyTgCalls, StreamType
 from pytgcalls.types import AudioPiped, VideoParameters, AudioParameters
@@ -222,14 +223,40 @@ async def process_voice_command(client: Client, chat_id: int, command: dict):
                             )
 
         elif action == 'pause':
-            logger.info(f"Pause command received in chat {chat_id}")
+            if chat_id in pytgcalls_instances:
+                pytgcalls = pytgcalls_instances[chat_id]
+                try:
+                    await pytgcalls.pause_stream(chat_id)
+                    logger.info(f"Paused playback in chat {chat_id}")
+                    await log_to_group(
+                        client,
+                        f"**Voice Command: Pause**\nChat ID: {chat_id}"
+                    )
+                except Exception as e:
+                    logger.error(f"Error pausing in chat {chat_id}: {e}")
 
         elif action == 'resume':
-            logger.info(f"Resume command received in chat {chat_id}")
+            if chat_id in pytgcalls_instances:
+                pytgcalls = pytgcalls_instances[chat_id]
+                try:
+                    await pytgcalls.resume_stream(chat_id)
+                    logger.info(f"Resumed playback in chat {chat_id}")
+                    await log_to_group(
+                        client,
+                        f"**Voice Command: Resume**\nChat ID: {chat_id}"
+                    )
+                except Exception as e:
+                    logger.error(f"Error resuming in chat {chat_id}: {e}")
 
         elif action == 'stop':
+            await voice_listener.stop_listening(chat_id)
+            audio_capture_manager.stop_capture(chat_id)
             await leave_voice_chat(chat_id)
-            logger.info(f"Stop command received in chat {chat_id}")
+            logger.info(f"Stopped and left voice chat {chat_id}")
+            await log_to_group(
+                client,
+                f"**Voice Command: Stop**\nChat ID: {chat_id}\nAssistant has left the voice chat"
+            )
 
     except Exception as e:
         logger.error(f"Error processing voice command in chat {chat_id}: {e}")
@@ -237,5 +264,5 @@ async def process_voice_command(client: Client, chat_id: int, command: dict):
 def setup_handlers(bot: Client, assistant: Client):
     bot.assistant = assistant
 
-    bot.add_handler(filters.command("assiststart") & filters.group, assiststart_handler)
-    bot.add_handler(filters.command("assistclose") & filters.group, assistclose_handler)
+    bot.add_handler(MessageHandler(assiststart_handler, filters.command("assiststart") & filters.group))
+    bot.add_handler(MessageHandler(assistclose_handler, filters.command("assistclose") & filters.group))

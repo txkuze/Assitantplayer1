@@ -9,6 +9,10 @@ logger = logging.getLogger(__name__)
 
 async def send_startup_log(bot: Client, bot_info, assistant_info, start_time):
     try:
+        if not config.LOGGER_GROUP_ID or config.LOGGER_GROUP_ID == 0:
+            logger.warning("LOGGER_GROUP_ID not configured, skipping startup log")
+            return
+
         system_info = f"""
 **Bot Started Successfully**
 
@@ -42,9 +46,13 @@ Bot is now running and ready to serve!
 
     except Exception as e:
         logger.error(f"Failed to send startup log: {e}")
+        logger.error(f"Make sure LOGGER_GROUP_ID ({config.LOGGER_GROUP_ID}) is correct and bot is added to the group as admin")
 
 async def log_to_group(bot: Client, message: str):
     try:
+        if not config.LOGGER_GROUP_ID or config.LOGGER_GROUP_ID == 0:
+            return
+
         await bot.send_message(
             config.LOGGER_GROUP_ID,
             message

@@ -6,7 +6,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from config import config
 from database.mongodb import db
-from handlers import commands, voice_chat, music
+from handlers import commands, voice_chat, music, group_management
 from utils.logger import send_startup_log
 from utils.generate_silence import generate_silence_file
 
@@ -77,6 +77,7 @@ music_bot = MusicBot()
 commands.setup_handlers(music_bot.bot, music_bot.assistant)
 voice_chat.setup_handlers(music_bot.bot, music_bot.assistant)
 music.setup_handlers(music_bot.bot, music_bot.assistant)
+group_management.setup_handlers(music_bot.bot, music_bot.assistant)
 
 if __name__ == "__main__":
     try:

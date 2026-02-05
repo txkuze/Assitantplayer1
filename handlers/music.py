@@ -1,5 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from pyrogram.handlers import MessageHandler
 import asyncio
 import logging
 from database.mongodb import db
@@ -170,5 +171,5 @@ async def process_voice_command_from_message(client: Client, message: Message, c
 def setup_handlers(bot: Client, assistant: Client):
     bot.assistant = assistant
 
-    bot.add_handler(filters.command("play") & filters.group, play_handler)
-    bot.add_handler(filters.voice & filters.group, voice_message_handler)
+    bot.add_handler(MessageHandler(play_handler, filters.command("play") & filters.group))
+    bot.add_handler(MessageHandler(voice_message_handler, filters.voice & filters.group))
